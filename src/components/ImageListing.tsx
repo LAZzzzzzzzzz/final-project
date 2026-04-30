@@ -1,4 +1,12 @@
 import { useInfiniteQuery } from '@tanstack/react-query'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
 import { getImages } from '../services/images'
 import { useInfiniteScroll } from '../hooks/useInfiniteScroll'
 
@@ -114,25 +122,44 @@ export default function ImageListing({ query }: ImageListingProps) {
 
       <div className="grid grid-cols-12 gap-4">
         {images.map((image) => (
-          <article
-            key={image.id}
-            className="col-span-12 overflow-hidden rounded-[1.5rem] border border-stone-200/80 bg-white/85 transition hover:-translate-y-0.5 sm:col-span-6 lg:col-span-3"
-          >
-            <div className="aspect-[4/5] overflow-hidden bg-stone-200">
-              <img
-                alt={image.alt_description ?? image.description ?? 'Unsplash image'}
-                className="h-full w-full object-cover"
-                loading="lazy"
-                src={image.urls.small}
-              />
-            </div>
-            <div className="space-y-1 p-4">
-              <h3 className="line-clamp-2 text-sm font-medium text-stone-900">
-                {image.alt_description ?? image.description ?? 'Untitled image'}
-              </h3>
-              <p className="text-sm text-stone-500">{image.user.name}</p>
-            </div>
-          </article>
+          <Dialog key={image.id}>
+            <DialogTrigger
+              className="col-span-12 overflow-hidden rounded-[1.5rem] border border-stone-200/80 bg-white/85 text-left transition hover:-translate-y-0.5 sm:col-span-6 lg:col-span-3"
+              render={<button type="button" />}
+            >
+              <div className="aspect-[4/5] overflow-hidden bg-stone-200">
+                <img
+                  alt={image.alt_description ?? image.description ?? 'Unsplash image'}
+                  className="h-full w-full object-cover"
+                  loading="lazy"
+                  src={image.urls.small}
+                />
+              </div>
+              <div className="space-y-1 p-4">
+                <h3 className="line-clamp-2 text-sm font-medium text-stone-900">
+                  {image.alt_description ?? image.description ?? 'Untitled image'}
+                </h3>
+                <p className="text-sm text-stone-500">{image.user.name}</p>
+              </div>
+            </DialogTrigger>
+            <DialogContent className="max-w-[min(96vw,1400px)] p-5 sm:p-6">
+              <div className="space-y-4">
+                <div className="overflow-hidden rounded-[1rem] bg-stone-100">
+                  <img
+                    alt={image.description ?? 'Image'}
+                    className="max-h-[88vh] w-full object-contain"
+                    src={image.urls.regular}
+                  />
+                </div>
+                <DialogHeader>
+                  <DialogTitle>
+                    {image.alt_description ?? image.description ?? 'Untitled image'}
+                  </DialogTitle>
+                  <DialogDescription>Photo by {image.user.name}</DialogDescription>
+                </DialogHeader>
+              </div>
+            </DialogContent>
+          </Dialog>
         ))}
       </div>
 
