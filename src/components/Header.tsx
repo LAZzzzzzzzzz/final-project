@@ -1,6 +1,11 @@
 import { Search as SearchIcon } from 'lucide-react'
 
-export default function Header() {
+type HeaderProps = {
+  query: string
+  onQueryChange: (value: string) => void
+}
+
+export default function Header({ query, onQueryChange }: HeaderProps) {
   return (
     <header className="mx-auto grid max-w-6xl gap-7 rounded-[2rem] border border-stone-300/70 bg-white/80 p-6 backdrop-blur md:grid-cols-[minmax(0,1.45fr)_minmax(18rem,0.95fr)] md:items-end md:p-8 lg:p-10">
       <div className="space-y-5">
@@ -9,8 +14,11 @@ export default function Header() {
         </div>
         <div className="space-y-4">
           <h1 className="text-4xl font-semibold tracking-[-0.08em] text-stone-950 sm:text-5xl lg:text-7xl">
-            Find Images.
+            Find the right image faster.
           </h1>
+          <p className="max-w-xl text-sm leading-6 text-stone-600 sm:text-base">
+            Search live as you type and keep scrolling for more results.
+          </p>
         </div>
       </div>
 
@@ -27,10 +35,21 @@ export default function Header() {
           </span>
           <input
             id="photo-search"
-            className="w-full rounded-[1.15rem] border border-stone-200 bg-white py-4 pl-11 pr-4 text-sm text-stone-900 outline-none transition focus:border-stone-400 focus:ring-4 focus:ring-stone-200/70 sm:text-base"
+            className="w-full rounded-[1.15rem] border border-stone-200 bg-white py-4 pl-11 pr-14 text-sm text-stone-900 outline-none transition focus:border-stone-400 focus:ring-4 focus:ring-stone-200/70 sm:text-base"
+            onChange={(event) => onQueryChange(event.target.value)}
             type="search"
-            placeholder="Search..."
+            value={query}
+            placeholder="Try mountains, city, portraits..."
           />
+          {query ? (
+            <button
+              className="absolute inset-y-0 right-3 my-auto h-8 rounded-full px-3 text-sm text-stone-500 transition hover:bg-stone-100 hover:text-stone-900"
+              onClick={() => onQueryChange('')}
+              type="button"
+            >
+              Clear
+            </button>
+          ) : null}
         </div>
       </div>
     </header>

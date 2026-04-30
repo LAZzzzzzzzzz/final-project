@@ -16,22 +16,28 @@ function Spinner() {
   )
 }
 
-export default function ImageListing() {
+type ImageListingProps = {
+  query: string
+}
+
+export default function ImageListing({ query }: ImageListingProps) {
   const {
     data,
     error,
     fetchNextPage,
     hasNextPage,
     isError,
+    isFetching,
     isFetchingNextPage,
     isLoading,
     refetch,
   } = useInfiniteQuery({
-    queryKey: ['images'],
+    queryKey: ['images', query],
     queryFn: ({ pageParam }) =>
       getImages({
         page: pageParam,
         perPage: IMAGES_PER_PAGE,
+        query: query || undefined,
       }),
     initialPageParam: 1,
     getNextPageParam: (lastPage, allPages) => {
@@ -44,6 +50,7 @@ export default function ImageListing() {
   })
 
   const images = data?.pages.flatMap((page) => page) ?? []
+  const hasNoResults = !isLoading && !isError && images.length === 0
 
   const sentinelRef = useInfiniteScroll({
     fetchNextPage,
@@ -84,14 +91,26 @@ export default function ImageListing() {
     <section className="mx-auto mt-6 max-w-6xl">
       <div className="mb-4 flex items-end justify-between gap-4">
         <div>
-          <p className="text-[0.72rem] font-medium tracking-[0.18em] text-stone-500">
-            IMAGE FEED
+          <p className="text-[0.72rem] font-medium uppercase tracking-[0.18em] text-stone-500">
+            Image Feed
           </p>
           <h2 className="mt-2 text-2xl font-semibold tracking-[-0.04em] text-stone-950">
             Latest photos
           </h2>
         </div>
+        {isFetching && !isFetchingNextPage ? (
+          <p className="text-sm text-stone-500">Searching...</p>
+        ) : null}
       </div>
+
+      {hasNoResults ? (
+        <div className="rounded-[1.75rem] border border-stone-200/80 bg-white/70 p-8 text-center">
+          <h3 className="text-lg font-semibold text-stone-900">No results found</h3>
+          <p className="mt-2 text-sm text-stone-500">
+            Try a broader keyword or a different subject.
+          </p>
+        </div>
+      ) : null}
 
       <div className="grid grid-cols-12 gap-4">
         {images.map((image) => (
@@ -101,20 +120,20 @@ export default function ImageListing() {
           >
             <div className="aspect-[4/5] overflow-hidden bg-stone-200">
               <img
-                alt='image'
+                alt={image.alt_description ?? image.description ?? 'Unsplash image'}
                 className="h-full w-full object-cover"
+                loading="lazy"
                 src={image.urls.small}
               />
             </div>
             <div className="space-y-1 p-4">
               <h3 className="line-clamp-2 text-sm font-medium text-stone-900">
-                {image.description || 'Untitled image'}
+                {image.alt_description ?? image.description ?? 'Untitled image'}
               </h3>
               <p className="text-sm text-stone-500">{image.user.name}</p>
             </div>
           </article>
         ))}
-
       </div>
 
       <div className="mt-6 flex flex-col items-center gap-3">
