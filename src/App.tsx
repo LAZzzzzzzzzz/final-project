@@ -1,13 +1,15 @@
-import './App.css'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-
-const queryClient = new QueryClient()
+import Header from './components/Header'
+import ImageListing from './components/ImageListing'
 
 function App() {
-
-  return <QueryClientProvider client={queryClient}>
-      <div>todo</div>
-    </QueryClientProvider>
+  return (
+    <main className="min-h-screen bg-stone-100 px-5 py-6 text-stone-950 sm:px-6 sm:py-8 lg:px-8">
+      <div>
+        <Header />
+        <ImageListing />
+      </div>
+    </main>
+  )
 }
 
 export default App
